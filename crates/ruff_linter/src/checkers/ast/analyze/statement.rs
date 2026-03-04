@@ -383,6 +383,9 @@ pub(crate) fn statement(stmt: &Stmt, checker: &mut Checker) {
             if checker.is_rule_enabled(Rule::DjangoExcludeWithModelForm) {
                 flake8_django::rules::exclude_with_model_form(checker, class_def);
             }
+            if checker.is_rule_enabled(Rule::ExcludeInModelSerializer) {
+                flake8_django::rules::exclude_with_serializer(checker, class_def);
+            }
             if checker.is_rule_enabled(Rule::DjangoAllWithModelForm) {
                 flake8_django::rules::all_with_model_form(checker, class_def);
             }

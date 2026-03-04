@@ -48,3 +48,28 @@ pub(super) fn get_model_field_name<'a>(
             qualified_name.last().copied()
         })
 }
+
+/// Return `true` if a Python class appears to be a Django REST Framework serializer,
+/// based on its base classes.
+pub(super) fn is_model_serializer(class_def: &ast::StmtClassDef, semantic: &SemanticModel) -> bool {
+    analyze::class::any_qualified_base_class(class_def, semantic, &|qualified_name| {
+        matches!(
+            qualified_name.segments(),
+            ["rest_framework", "serializers", "ModelSerializer"]
+                | ["rest_framework", "serializers", "HyperlinkedModelSerializer"]
+                | ["rest_framework", "serializers", "Serializer"]
+        )
+    })
+}
+
+/// Return `true` if the class is a Django REST Framework ModelSerializer or its subclass.
+/// This is a more specific check for our rule.
+pub(super) fn is_concrete_model_serializer(class_def: &ast::StmtClassDef, semantic: &SemanticModel) -> bool {
+    analyze::class::any_qualified_base_class(class_def, semantic, &|qualified_name| {
+        matches!(
+            qualified_name.segments(),
+            ["rest_framework", "serializers", "ModelSerializer"]
+                | ["rest_framework", "serializers", "HyperlinkedModelSerializer"]
+        )
+    })
+}
